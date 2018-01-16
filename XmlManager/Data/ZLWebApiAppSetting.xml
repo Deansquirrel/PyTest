@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<appSettings >
+  <RunLogLevel>2</RunLogLevel>
+  <SelfHostUrl>http://123.57.226.114:8056</SelfHostUrl>
+  <SystemDataConnectionString>data source=123.57.226.114,1433;initial catalog=CRMDTDS队列库20170208;user id=sa;password=84519741</SystemDataConnectionString>
+  <SetDescription>CRM测试业务管道服务-连接队列库</SetDescription>
+  <SetDisplayName>CRM测试业务管道服务-连接队列库</SetDisplayName>
+  <SetServiceName>crmcsywgdfw-dl</SetServiceName>
+  <TokenCode>abc</TokenCode>
+</appSettings>
