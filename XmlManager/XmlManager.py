@@ -1,18 +1,45 @@
 # coding=utf-8
 import xml.dom.minidom
 
-# 参考
-# https://www.cnblogs.com/fnng/p/3581433.html
 # API
-# https://docs.python.org/2/library/xml.dom.html
+# https://docs.python.org/3.6/library/xml.dom.html
 
 
-def is_node_valid(node_name):
-    return True
+# 根据path获取dom对象
+def get_xml_dom(path):
+    xml_str = ""
+    try:
+        file_object = open(path, encoding="utf-8")
+        lines = file_object.readlines()
+        for line in lines:
+            line = line.strip()
+            if line != "":
+                xml_str = xml_str + line
+    except Exception as err:
+        print('错误信息：{0}'.format(err))
+        exit()
+    finally:
+        file_object.close()
+    return xml.dom.minidom.parseString(xml_str)
 
 
-def get_node_value(node_name):
-    return "nodeValue"
+# 将dom对象写入文件
+def write_xml_dom(path, document):
+    try:
+        with open(path, 'w', encoding='UTF-8') as fh:
+            document.writexml(fh, indent="", addindent='\t', newl='\n', encoding='UTF-8')
+    except Exception as err:
+        print('错误信息：{0}'.format(err))
+
+
+# 修改节点属性
+def chang_attribute(att_path, check_key, check_value, change_key, change_value):
+    pass
+
+
+# 修改节点Text
+def chang_text(att_path, check_key, check_value, new_text):
+    pass
 
 
 if __name__ == '__main__':
@@ -20,34 +47,29 @@ if __name__ == '__main__':
     print("Begin")
     print("--------------------------------------")
 
-    dom = xml.dom.minidom.parse('Data\Web.config')
-    # dom = xml.dom.minidom.parse('Data\ZLWebApiAppSetting.xml')
-    root = dom.documentElement
+    file_path = "Data\Web.config"
+    # path = "Data\ZLWebApiAppSetting.xml"
+
+    dom = get_xml_dom(file_path)
 
     root = dom.documentElement
+    app_settings = root.getElementsByTagName("appSettings")
 
-    print(root.nodeName)
-
-    node = dom.getElementsByTagName(root.nodeName)
-    print(node.length)
-    if node.length > 1:
-        print("多个根节点数量异常")
+    if app_settings.length < 1:
+        print("无appSettings节点")
         exit()
 
-    if node.length <1:
-        print("无根节点")
-        exit()
+    node_app_settings = app_settings.item(0)
+    node_list_add = node_app_settings.getElementsByTagName("add")
 
-    for i in range(node.length):
-        item = node.item(i)
-        print(item.nodeName)
-        sub_node = node.item(i).getElementsByTagName("appSettings")
-        print(sub_node.length)
-        for i in range(sub_node.length):
-            item = sub_node.item(i)
-            print(item.nodeName)
+    for i in range(node_list_add.length):
+        node_add = node_list_add.item(i)
+        if node_add.getAttribute("key") == "webpages:Version":
+            print(node_add.getAttribute("value"))
+            node_add.setAttribute("value", "3.0.0.0")
+            print(node_add.getAttribute("value"))
 
-    # print(root.length)
+    write_xml_dom(path, dom)
 
     print("--------------------------------------")
     print("End")
