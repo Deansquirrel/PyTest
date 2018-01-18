@@ -8,28 +8,20 @@ import xml.dom.minidom
 # 根据path获取dom对象
 def get_xml_dom(file_path):
     xml_str = ""
-    try:
-        file_object = open(file_path, encoding="utf-8")
-        lines = file_object.readlines()
-        for line in lines:
-            line = line.strip()
-            if line != "":
-                xml_str = xml_str + line
-    except Exception as err:
-        print('错误信息：{0}'.format(err))
-        exit()
-    finally:
-        file_object.close()
+    file_object = open(file_path, encoding="utf-8")
+    lines = file_object.readlines()
+    for line in lines:
+        line = line.strip()
+        if line != "":
+            xml_str = xml_str + line
+    file_object.close()
     return xml.dom.minidom.parseString(xml_str)
 
 
 # 将dom对象写入文件
 def write_xml_dom(file_path, document):
-    try:
-        with open(file_path, 'w', encoding='UTF-8') as fh:
-            document.writexml(fh, indent="", addindent='  ', newl='\n', encoding='UTF-8')
-    except Exception as err:
-        print('错误信息：{0}'.format(err))
+    with open(file_path, 'w', encoding='UTF-8') as fh:
+        document.writexml(fh, indent="", addindent='  ', newl='\n', encoding='UTF-8')
 
 
 # 获取节点dom
@@ -52,9 +44,13 @@ def get_sub_dom(xml_dom, node_path, find_key, find_value):
                                 if attr_value == find_value:
                                     return item
                     else:
-                        return get_sub_dom(item,'|'.join(node_path_dict),find_key,find_value)
-        raise Exception("未找到节点 - 【" + this_node + "】【" + find_key + "】【" + find_value + "】")
-        # print("未找到节点 - 【" + this_node + "】【" + find_key + "】【" + find_value + "】")
+                        return get_sub_dom(item, '|'.join(node_path_dict), find_key, find_value)
+            raise Exception("未找到节点 - 【" + this_node + "】【" + find_key + "】【" + find_value + "】")
+            # print("未找到节点 - 【" + this_node + "】【" + find_key + "】【" + find_value + "】")
+        else:
+            raise Exception("DOM 对象不存在子节点 - 【" + this_node + "】【" + find_key + "】【" + find_value + "】")
+    else:
+        raise Exception("DOM 对象不能为空")
 
 
 # 修改节点属性
@@ -80,21 +76,22 @@ if __name__ == '__main__':
     print("Begin")
     print("--------------------------------------")
 
-    # file = "Data\Web.config"
-    file = "Data\ZLWebApiAppSetting.xml"
+    # 文件路径
+    file = "Data\Web.config"
+    # file = "Data\ZLWebApiAppSetting.xml"
 
+    # 读取Xml文件
     dom = get_xml_dom(file)
 
-    try:
-        # 属性修改举例
-        chang_attribute(dom, "configuration|runtime|assemblyBinding",
-                    "xmlns", "urn:schemas-microsoft-com:asm.v1",
-                    "xmlns", "new xmlns value")
-        # 文本修改举例
-        chang_text(dom, "appSettings|RunLogLevel", "", "", "newText")
-    except Exception as ex:
-        print(ex)
+    # 属性修改举例
+    chang_attribute(dom, "configuration|runtime|assemblyBinding",
+                "xmlns", "urn:schemas-microsoft-com:asm.v1",
+                "xmlns", "xlm")
 
+    # 文本修改举例
+    # chang_text(dom, "appSettings|RunLogLevel", "", "", "newText")
+
+    # 重新写入Xml
     write_xml_dom(file, dom)
 
     print("--------------------------------------")
