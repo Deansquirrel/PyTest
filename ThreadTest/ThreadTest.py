@@ -27,7 +27,7 @@ if __name__ == '__main__':
         t.setDaemon(True)
         t.start()
         print(t)
+        t.join()
     print("123")
-    t.join()
     print(t)
     print("all over %s" % ctime())
